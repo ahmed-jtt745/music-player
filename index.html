@@ -6,35 +6,52 @@
     <title>Document</title>
 </head>
 <body>
+    <input type="text" placeholder="Search Anything" id="searchBar">
 
-    <input type="text" placeholder="search anything" id="search">
-    
-    <ul class="song-list">
+    <br><br>
+    <button data-category="All" class="cat-button">All</button>
+    <button data-category="love" class="cat-button">love</button>
+    <button data-category="sad" class="cat-button">sad</button>
+    <button data-category="fun" class="cat-button">Fun</button>
+
+    <ul id="song-list">
 
     </ul>
-    
+
+    <br><br>
+    <button onclick="previousSong()">Previous</button>
     <button onclick="pauseSong()">Pause</button>
     <button onclick="playSong()">Play</button>
     <button onclick="nextSong()">Next</button>
-    <button onclick="previousSong()">Previous</button>
+    <input type="range" min="0" max="100" value="50" id="volumeBar">
+    <br><br>
 
-    <input type="range" min="0" max="100" value="70" id="slider">
-    <input type="range" min="0" max="100" value="0" id="progress">
+    <input type="range" min="0" max="100" value="0" id="progressBar">
+
 
     <script>
-        let ul = document.querySelector('.song-list');
-        let songs = [{ name: "Jo Tum Mere Ho . by Anuv Jain", category: "Sad", src: "songs/song1.mp3"}, { name: "For A Reason . by Karan Aujla", category: "fun", src: "songs/song2.mp3"}, { name: "Tension . by Diljit Dosant", category: "fun", src: "songs/song3.mp3"}, { name: "Arz Kiya ha . by Anuv Jain", category: "love", src: "songs/song4.mp3"}];
-        let currentIndex = 0;
+        let songs = [{ name: "Jo Tum Mere Ho . by Anuv Jain", category: "sad", src: "music-player/songs/song1.mp3"}, { name: "For A Reason . by Karan Aujla", category: "fun", src: "music-player/songs/song2.mp3"}, { name: "Tension . by Diljit Dosant", category: "fun", src: "music-player/songs/song3.mp3"}, { name: "Arz Kiya ha . by Anuv Jain", category: "love", src: "music-player/songs/song4.mp3"}];
+        let ul = document.getElementById('song-list');
+        let progressBar = document.getElementById('progressBar');
+        let volumeSlider = document.getElementById('volumeBar');
         let audio = new Audio();
+        let index = 0;
 
         audio.src = songs[0].src;
+        audio.load();
 
         function loadSong(index){
             audio.src = songs[index].src;
             audio.load();
         }
 
-        function playSong(){
+        function playSong(index){
+            audio.play();
+        }
+
+        function nextSong(){
+            index = (index + 1) % songs.length;
+            loadSong(index);
             audio.play();
         }
 
@@ -42,65 +59,76 @@
             audio.pause();
         }
 
-        function nextSong(){
-            currentIndex = (currentIndex + 1) % songs.length;
-            loadSong(currentIndex);
-            audio.play();
-        }
-
         function previousSong(){
-            currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-            loadSong(currentIndex);
+            index = (index - 1 + songs.length) % songs.length;
+            loadSong(index);
             audio.play();
         }
-
-        let volumeSlider = document.getElementById('slider');
 
         volumeSlider.addEventListener('input', () => {
             audio.volume = volumeSlider.value / 100;
         });
 
-        let progressBar = document.getElementById('progress');
-
         audio.addEventListener('timeupdate', () => {
-            const percent = (audio.currentTime / audio.duration) * 100;
-
-            console.log(percent);
-            progressBar.value = percent;
+            progressBar.value = (audio.currentTime / audio.duration) * 100;
         });
 
         progressBar.addEventListener('input', () => {
             audio.currentTime = (progressBar.value / 100) * audio.duration;
         });
 
-        function renderList(filteredList){
+        function renderList(songList){
             ul.innerHTML = "";
-
-            filteredList.forEach((song, index) => {
-                const li = document.createElement('li');
+            
+            songList.forEach((song, songIndex) => {
+                let li = document.createElement('li');
                 li.innerText = song.name;
                 li.dataset.index = index;
 
                 li.addEventListener('click', () => {
-                    currentIndex = index;
-                    loadSong(currentIndex);
-                    audio.play();
+                    index = songIndex;
+                    loadSong(index);
+                    playSong();
                 });
-
                 ul.append(li);
-            }); 
+            });
         }
 
-        let search = document.getElementById('search');
-        search.addEventListener('input', () => {
-            const query = search.value;
+        renderList(songs);
+        let activeCategory = "All";
 
-            const filtered = songs.filter(song => song.name.includes(query));
+        let categoryButtons = document.querySelectorAll('.cat-button');
 
-            renderList(filtered);
+        categoryButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+                activeCategory = category;
+
+                renderList(getFiltered());
+            });
         });
 
-        renderList(songs);
+        let searchBar = document.getElementById('searchBar');
+        searchBar.addEventListener('input', () => {
+            let query = searchBar.value;
+
+            renderList(getFiltered());
+        });
+
+        
+        function getFiltered(){
+            let query = searchBar.value;
+
+            return songs.filter((song) => {
+                const cat = activeCategory == "All" || song.category == activeCategory;
+                const searchMatch = song.name.includes(query);
+
+                return cat && searchMatch;
+            });
+        }
+
+
     </script>
+
 </body>
 </html>
