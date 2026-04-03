@@ -6,7 +6,101 @@
     <title>Document</title>
 </head>
 <body>
+
+    <input type="text" placeholder="search anything" id="search">
     
-    <a href=""></a>
+    <ul class="song-list">
+
+    </ul>
+    
+    <button onclick="pauseSong()">Pause</button>
+    <button onclick="playSong()">Play</button>
+    <button onclick="nextSong()">Next</button>
+    <button onclick="previousSong()">Previous</button>
+
+    <input type="range" min="0" max="100" value="70" id="slider">
+    <input type="range" min="0" max="100" value="0" id="progress">
+
+    <script>
+        let ul = document.querySelector('.song-list');
+        let songs = [{ name: "Jo Tum Mere Ho . by Anuv Jain", category: "Sad", src: "songs/song1.mp3"}, { name: "For A Reason . by Karan Aujla", category: "fun", src: "songs/song2.mp3"}, { name: "Tension . by Diljit Dosant", category: "fun", src: "songs/song3.mp3"}, { name: "Arz Kiya ha . by Anuv Jain", category: "love", src: "songs/song4.mp3"}];
+        let currentIndex = 0;
+        let audio = new Audio();
+
+        audio.src = songs[0].src;
+
+        function loadSong(index){
+            audio.src = songs[index].src;
+            audio.load();
+        }
+
+        function playSong(){
+            audio.play();
+        }
+
+        function pauseSong(){
+            audio.pause();
+        }
+
+        function nextSong(){
+            currentIndex = (currentIndex + 1) % songs.length;
+            loadSong(currentIndex);
+            audio.play();
+        }
+
+        function previousSong(){
+            currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+            loadSong(currentIndex);
+            audio.play();
+        }
+
+        let volumeSlider = document.getElementById('slider');
+
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = volumeSlider.value / 100;
+        });
+
+        let progressBar = document.getElementById('progress');
+
+        audio.addEventListener('timeupdate', () => {
+            const percent = (audio.currentTime / audio.duration) * 100;
+
+            console.log(percent);
+            progressBar.value = percent;
+        });
+
+        progressBar.addEventListener('input', () => {
+            audio.currentTime = (progressBar.value / 100) * audio.duration;
+        });
+
+        function renderList(filteredList){
+            ul.innerHTML = "";
+
+            filteredList.forEach((song, index) => {
+                const li = document.createElement('li');
+                li.innerText = song.name;
+                li.dataset.index = index;
+
+                li.addEventListener('click', () => {
+                    currentIndex = index;
+                    loadSong(currentIndex);
+                    audio.play();
+                });
+
+                ul.append(li);
+            }); 
+        }
+
+        let search = document.getElementById('search');
+        search.addEventListener('input', () => {
+            const query = search.value;
+
+            const filtered = songs.filter(song => song.name.includes(query));
+
+            renderList(filtered);
+        });
+
+        renderList(songs);
+    </script>
 </body>
 </html>
