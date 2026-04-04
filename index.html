@@ -4,37 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Sonic Ethereal</title>
 </head>
 <body>
 
     <div class="navBar">
         <h2>Sonic Ethereal</h2>
-        <div class="search">
-            <input type="text" placeholder="Search Anything" id="searchBar">
+        <div class="search search-desktop">
+            <label for="searchBar">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+            </label>
+            <div>
+                <input type="text" placeholder="Search Anything" id="searchBar">
+            </div>
+        </div>
+
+        <button class="search-toggle-btn" id="searchToggleBtn" aria-label="Open search">
+            <svg class="icon-search-open" xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+        </button>
+    </div>
+
+    <div class="mobile-search-bar" id="mobileSearchBar">
+        <div class="mobile-search-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" class="mobile-search-icon"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+            <input type="text" placeholder="Search songs..." id="searchBarMobile">
+            <button class="search-close-btn" id="searchCloseBtn" aria-label="Close search">
+                <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px"><path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"/></svg>
+            </button>
         </div>
     </div>
 
     <div class="category">
-        <button data-category="All" class="cat-button">All</button>
-        <button data-category="love" class="cat-button">love</button>
-        <button data-category="sad" class="cat-button">sad</button>
+        <button data-category="All" class="cat-button active">All</button>
+        <button data-category="love" class="cat-button">Love</button>
+        <button data-category="sad" class="cat-button">Sad</button>
         <button data-category="fun" class="cat-button">Fun</button>
     </div>
 
-    <ul id="song-list">
+    <div class="song-list-container">
+        <ul id="song-list"></ul>
+    </div>
 
-    </ul>
+    <div class="player-bar" id="playerBar">
 
-    <br><br>
-    <button onclick="previousSong()">Previous</button>
-    <button onclick="pauseSong()">Pause</button>
-    <button onclick="playSong()">Play</button>
-    <button onclick="nextSong()">Next</button>
-    <input type="range" min="0" max="100" value="50" id="volumeBar">
-    <br><br>
+        <div class="player-top">
+            <div class="player-left">
+                <div class="player-thumb">
+                    <img id="playerThumb" src="" alt="Album Art">
+                    <div class="thumb-overlay">
+                        <div class="eq-bars">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-meta">
+                    <p class="player-song-name" id="playerSongName">Select a song</p>
+                    <p class="player-category" id="playerCategory">—</p>
+                </div>
+            </div>
 
-    <input type="range" min="0" max="100" value="0" id="progressBar">
+            <div class="player-controls">
+                <button class="ctrl-btn" onclick="previousSong()" title="Previous">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M220-240v-480h80v480h-80Zm520 0L380-480l360-240v480Zm-80-240Zm0 90v-180l-136 90 136 90Z"/></svg>
+                </button>
+                <button class="ctrl-btn play-btn" id="playPauseBtn" onclick="togglePlay()" title="Play / Pause">
+                    <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z"/></svg>
+                    <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor" style="display:none;"><path d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"/></svg>
+                </button>
+                <button class="ctrl-btn" onclick="nextSong()" title="Next">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M660-240v-480h80v480h-80Zm-440 0v-480l360 240-360 240Zm80-240Zm0 90 136-90-136-90v180Z"/></svg>
+                </button>
+            </div>
+
+        </div>
+
+        <div class="player-bottom">
+            <span class="time-label" id="currentTime">0:00</span>
+            <input type="range" min="0" max="100" value="0" id="progressBar">
+            <span class="time-label" id="duration">0:00</span>
+            <svg class="vol-icon" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/></svg>
+            <input type="range" min="0" max="100" value="50" id="volumeBar">
+        </div>
+
+    </div>
 
     <script src="app.js"></script>
 
